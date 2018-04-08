@@ -1,6 +1,6 @@
 # Container7
 
-[![Latest Version](https://img.shields.io/github/release/moro4125/container7.svg?style=flat-square)](https://github.com/thephpleague/container/releases)
+[![Latest Version](https://img.shields.io/github/release/Moro4125/container7.svg?style=flat-square)](https://github.com/Moro4125/container7/releases)
 [![Build Status](https://travis-ci.org/Moro4125/container7.svg?branch=master)](https://travis-ci.org/Moro4125/container7)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
