@@ -1,0 +1,6 @@
+{
+  "@extends": [
+    "parent.json"
+  ],
+  "first": "new value"
+}

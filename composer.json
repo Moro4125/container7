@@ -1,0 +1,46 @@
+{
+  "name": "moro/container7",
+  "description": "Dependency Injection container for PHP-7",
+  "keywords": ["php", "dependency injection", "di", "container", "serializable", "psr-11"],
+  "version": "1.0.0",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Andrey Morozkin",
+      "email": "andrey.dmitrievich@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Moro\\Container7\\": "sources/",
+      "Moro\\Container7\\Test\\": "tests/sources/"
+    }
+  },
+  "require": {
+    "psr/container": "1.0.0"
+  },
+  "provide": {
+    "psr/container-implementation": "1.0.0"
+  },
+  "require-dev": {
+    "codeception/codeception": "~2.3",
+    "codeception/verify": "~1.0",
+    "codeception/specify": "~1.0",
+    "codeception/assert-throws": "~1.0",
+    "infection/infection": "~0.5"
+  },
+  "archive": {
+    "exclude": [
+      "/vendor",
+      "/tests",
+      "/codeception.json",
+      "/composer.lock",
+      "/composer.phar",
+      "/infection.json.dist",
+      "/infection.php",
+      "/phpunit.php",
+      "/phpunit.xml.dist"
+    ]
+  }
+}

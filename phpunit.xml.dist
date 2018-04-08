@@ -1,0 +1,19 @@
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.0/phpunit.xsd"
+        bootstrap="tests/phpunit.bootstrap.php"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="false"
+        convertWarningsToExceptions="false"
+        verbose="true">
+<testsuites>
+    <testsuite name="My Test Suite">
+        <file>tests/unit/AliasesTest.php</file>
+        <file>tests/unit/CollectionTest.php</file>
+        <file>tests/unit/ContainerTest.php</file>
+        <file>tests/unit/DefinitionTest.php</file>
+        <file>tests/unit/ParametersTest.php</file>
+        <file>tests/unit/TagsTest.php</file>
+    </testsuite>
+</testsuites>
+</phpunit>

@@ -1,0 +1,18 @@
+{
+  "source": {
+    "directories": [
+      "sources"
+    ],
+    "excludes": [
+      "Helper"
+    ]
+  },
+  "timeout": 10,
+  "logs": {
+    "text": "tests\/_output\/infection-log.txt"
+  },
+  "phpUnit": {
+    "configDir": ".",
+    "customPath": "vendor\/phpunit\/phpunit\/phpunit"
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "container": {
+    "singletons": [
+      {
+        "alias": "getServiceA1",
+        "class": "Moro\\Container7\\Test\\ServiceA1"
+      },
+      {
+        "alias": "getServiceA2_2",
+        "class": "Moro\\Container7\\Test\\ServiceA2"
+      },
+      {
+        "alias": "getServiceA2_1",
+        "class": "Moro\\Container7\\Test\\ServiceA2"
+      },
+      {
+        "class": "Moro\\Container7\\Test\\ServiceA4",
+        "args": [
+          "@Moro\\Container7\\Test\\ServiceA1"
+        ]
+      },
+      {
+        "class": "Moro\\Container7\\Test\\ServiceA5",
+        "calls": [
+          {
+            "method": "setValue5",
+            "args": [
+              "v5"
+            ]
+          }
+        ]
+      },
+      {
+        "class": "Moro\\Container7\\Test\\ServiceA7",
+        "calls": [
+          {
+            "method": "setCollection",
+            "args": [
+              "$collections[t2]"
+            ]
+          },
+          {
+            "method": "setValue7",
+            "args": [
+              "%parameter_a7%"
+            ]
+          }
+        ]
+      }
+    ],
+    "factories": [
+      {
+        "class": "Moro\\Container7\\Test\\ServiceA3",
+        "args": [
+          "$0"
+        ]
+      }
+    ],
+    "extends": [
+      {
+        "target": "Moro\\Container7\\Test\\ServiceA5",
+        "class": "Moro\\Container7\\Test\\ServiceA6",
+        "calls": [
+          {
+            "method": "setValue5",
+            "args": [
+              "$target::getValue5"
+            ]
+          }
+        ]
+      },
+      {
+        "target": "Moro\\Container7\\Test\\ServiceA6",
+        "calls": [
+          {
+            "method": "setValue6",
+            "args": [
+              "v6"
+            ]
+          }
+        ]
+      },
+      {
+        "target": "Moro\\Container7\\Parameters",
+        "calls": [
+          {
+            "method": "set",
+            "args": [
+              "new_parameter",
+              1
+            ]
+          },
+          {
+            "method": "set",
+            "args": [
+              "parameter_a7",
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "target": "Moro\\Container7\\Aliases",
+        "calls": [
+          {
+            "method": "add",
+            "args": [
+              "a1",
+              "Moro\\Container7\\Test\\ServiceA1"
+            ]
+          },
+          {
+            "method": "add",
+            "args": [
+              "a2",
+              "unknown interface"
+            ]
+          }
+        ]
+      },
+      {
+        "target": "Moro\\Container7\\Tags",
+        "calls": [
+          {
+            "method": "add",
+            "args": [
+              "t2",
+              "getServiceA2_1"
+            ]
+          },
+          {
+            "method": "add",
+            "args": [
+              "t2",
+              "getServiceA2_2"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

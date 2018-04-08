@@ -1,0 +1,45 @@
+{
+  "container": {
+    "parameters": {
+      "value3": 3,
+      "class": "ArrayObject"
+    },
+    "singletons": [
+      {
+        "class": "Moro\\Container7\\Test\\ServiceA1",
+        "tags": {
+          "tag1": 2
+        }
+      },
+      {
+        "class": "Moro\\Container7\\Test\\ServiceA2",
+        "tags": {
+          "tag1": 1
+        }
+      },
+      {
+        "interface": "ArrayAccess",
+        "alias": "ServiceTestEachRule",
+        "class": "%class%",
+        "calls": [
+          {
+            "foreach": "$collections[tag1]",
+            "method": "append",
+            "args": [
+              "$item"
+            ]
+          }
+        ]
+      },
+      {
+        "class": "Moro\\Container7\\Test\\ServiceA3",
+        "args": [
+          1
+        ],
+        "properties": {
+          "value": "%value3%"
+        }
+      }
+    ]
+  }
+}
