@@ -1,5 +1,9 @@
 # Container7
 
+[![Latest Version](https://img.shields.io/github/release/moro4125/container7.svg?style=flat-square)](https://github.com/thephpleague/container/releases)
+[![Build Status](https://travis-ci.org/Moro4125/container7.svg?branch=master)](https://travis-ci.org/Moro4125/container7)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+
 Container7 is a medium Dependency Injection Container for PHP-7.
 
 This package is compliant with [PSR-1], [PSR-2], [PSR-4] and [PSR-11]. If you notice compliance oversights, please send a patch via pull request.

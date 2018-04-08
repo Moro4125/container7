@@ -39,8 +39,10 @@
       "/composer.phar",
       "/infection.json.dist",
       "/infection.php",
-      "/phpunit.php",
-      "/phpunit.xml.dist"
+      "/phpunit.xml.dist",
+      "/.gitattributes",
+      "/.gitignore",
+      "/.travis.yml"
     ]
   }
 }
