@@ -3,3 +3,5 @@ composer.phar
 /.idea/
 /tests/_output/*
 !/tests/_output/.gitkeep
+/coverage.clover
+/build/
