@@ -94,6 +94,7 @@
         ]
       },
       {
+        "alias": "alias is not used in this place",
         "target": "Moro\\Container7\\Aliases",
         "calls": [
           {

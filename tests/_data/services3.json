@@ -39,6 +39,25 @@
         "properties": {
           "value": "%value3%"
         }
+      },
+      {
+        "class": "Moro\\Container7\\Test\\ServiceA6",
+        "calls": [
+          {
+            "foreach": "@ServiceTestEachRule",
+            "method": "setValue5",
+            "args": [
+              "$item"
+            ]
+          },
+          {
+            "method": "setValue6",
+            "args": [
+              "@Moro\\Container7\\Test\\ServiceA3->value",
+              []
+            ]
+          }
+        ]
       }
     ]
   }

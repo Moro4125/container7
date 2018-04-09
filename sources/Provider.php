@@ -301,7 +301,9 @@ final class Provider extends Definition
 
     final public function tags(Aliases $aliases): Tags
     {
-        return new Tags($aliases);
+        $tags = new Tags($aliases);
+        $tags->add(Tags::REGULAR, Container::class);
+        return $tags;
     }
 
     final public function parameters(): Parameters

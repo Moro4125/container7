@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the package moro/container7
+ *
+ * @see https://github.com/Moro4125/container7
+ * @license http://opensource.org/licenses/MIT
+ * @author Morozkin Andrey <andrey.dmitrievich@gmail.com>
+ */
 
 use Moro\Container7\Aliases;
 use Moro\Container7\Collection;
@@ -430,6 +437,14 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
             /** @var ServiceA3 $service */
             $service = $this->container->get(ServiceA3::class);
             verify($service->value)->same(3);
+        });
+
+        $this->specify('Test IteratorAggregate interface in "foreach" rule', function () {
+            /** @var ServiceA6 $service */
+            $service = $this->container->get(ServiceA6::class);
+            $serviceA2 = $this->container->get(ServiceA2::class);
+            verify($service->getValue5())->same($serviceA2);
+            verify($service->getValue6())->same(3);
         });
     }
 

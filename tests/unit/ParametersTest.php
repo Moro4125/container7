@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the package moro/container7
+ *
+ * @see https://github.com/Moro4125/container7
+ * @license http://opensource.org/licenses/MIT
+ * @author Morozkin Andrey <andrey.dmitrievich@gmail.com>
+ */
 
 use Moro\Container7\Parameters;
 
@@ -111,6 +118,7 @@ class ParametersTest extends \PHPUnit\Framework\TestCase
             verify($parameters->get('k1/k1.1/k1.1.1/k1.1.1.1'))->same(null);
 
             verify($parameters->get('k4', false))->false();
+            verify($parameters->get('k1/k2.1/k0', false))->false();
         });
 
         $this->specify('Check array merge features', function () {
@@ -119,14 +127,20 @@ class ParametersTest extends \PHPUnit\Framework\TestCase
             $parameters->add('k1', '...');
             $parameters->add('k1', ['v1.3' => null]);
             verify($parameters->get('k1'))->same(['v1.3' => null]);
-
         });
 
-        $this->specify('', function () {
+        $this->specify('Wrong parameter value definition', function () {
             $parameters = new Parameters();
             $parameters->add('k1', 'v1');
             $parameters->add('k2', 'ak1%');
             verify($parameters->get('k2'))->notSame('v1');
+        });
+
+        $this->specify('Call method merge from method add', function () {
+            $parameters = new Parameters();
+            $parameters->add('k1', ['v1']);
+            $parameters->add('k1', ['v2']);
+            verify($parameters->get('k1'))->same(['v2', 'v1']);
         });
     }
 
