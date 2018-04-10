@@ -1,6 +1,6 @@
 # Container7
 
-[![Latest Version](https://img.shields.io/github/release/Moro4125/container7.svg?style=flat-square)](https://github.com/Moro4125/container7/releases)
+[![Latest Version 1.1](https://img.shields.io/github/release/Moro4125/container7.svg?style=flat-square)](https://github.com/Moro4125/container7/releases)
 [![Build Status](https://img.shields.io/travis/Moro4125/container7.svg?style=flat-square)](https://travis-ci.org/Moro4125/container7)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
