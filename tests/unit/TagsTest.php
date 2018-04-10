@@ -68,6 +68,10 @@ class TagsTest extends \PHPUnit\Framework\TestCase
             $tags->add('t4', 't4', 1);
             verify($tags->keysByTag('t4'))->same(['t4']);
             verify($tags->tagsForKey('t4'))->same(['t4']);
+
+            $tags->register('t5');
+            verify($tags->hasTag('t5'))->true();
+            verify($tags->keysByTag('t5'))->same([]);
         });
 
         $this->specify('Check bad float priorities.', function () {

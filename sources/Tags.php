@@ -25,6 +25,13 @@ final class Tags
         $this->_aliases = $aliases;
     }
 
+    public function register(string $tag)
+    {
+        if (empty($this->_byTag[$tag])) {
+            $this->_byTag[$tag] = [];
+        }
+    }
+
     public function add(string $tag, string $key, float $priority = null)
     {
         $key = $this->_aliases->resolve($key) ?: $key;
