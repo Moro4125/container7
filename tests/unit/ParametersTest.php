@@ -121,12 +121,26 @@ class ParametersTest extends \PHPUnit\Framework\TestCase
             verify($parameters->get('k1/k2.1/k0', false))->false();
         });
 
-        $this->specify('Check array merge features', function () {
+        $this->specify('Check array merge feature', function () {
             $parameters = new Parameters();
 
             $parameters->add('k1', '...');
             $parameters->add('k1', ['v1.3' => null]);
             verify($parameters->get('k1'))->same(['v1.3' => null]);
+        });
+
+        $this->specify('Check array append feature', function () {
+            $parameters = new Parameters();
+
+            $parameters->append(['k1' => 'v1', 'k2' => ['k2.1' => 'v2.1']]);
+
+            verify($parameters->get('k1'))->same('v1');
+            verify($parameters->get('k2'))->same(['k2.1' => 'v2.1']);
+
+            $parameters->append(['k1' => 'v2', 'k2' => ['k2.2' => 'v2.2']]);
+
+            verify($parameters->get('k1'))->same('v2');
+            verify($parameters->get('k2'))->same(['k2.2' => 'v2.2', 'k2.1' => 'v2.1']);
         });
 
         $this->specify('Wrong parameter value definition', function () {

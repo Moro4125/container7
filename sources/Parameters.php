@@ -64,6 +64,13 @@ final class Parameters implements ArrayAccess
         return $key === null ? $this->_parameters : $this->_parameters[$key];
     }
 
+    public function append(array $parameters)
+    {
+        foreach ($parameters as $key => $value) {
+            $this->add($key, $value);
+        }
+    }
+
     public function add(string $key, $value)
     {
         $this->_parameters[$key] = (isset($this->_parameters[$key]) && is_array($this->_parameters[$key]) && is_array($value))
