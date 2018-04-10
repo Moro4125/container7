@@ -43,6 +43,30 @@ class Collection implements Iterator, Countable
         return $this;
     }
 
+    public function exclude(string $tagOrInterface): Collection
+    {
+        $collection = $this->_container->getCollection($tagOrInterface);
+        $collection->_collection = array_values(array_diff($this->_collection, $collection->_collection));
+
+        return $collection;
+    }
+
+    public function merge(string $tagOrInterface): Collection
+    {
+        $collection = $this->_container->getCollection($tagOrInterface);
+        $collection->_collection = array_unique(array_merge($this->_collection, $collection->_collection));
+
+        return $collection;
+    }
+
+    public function with(string $tagOrInterface): Collection
+    {
+        $collection = $this->_container->getCollection($tagOrInterface);
+        $collection->_collection = array_values(array_intersect($this->_collection, $collection->_collection));
+
+        return $collection;
+    }
+
     public function add($providerOrAlias, string $method = null)
     {
         $class = is_object($providerOrAlias)

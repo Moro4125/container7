@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the package moro/container7
+ *
+ * @see https://github.com/Moro4125/container7
+ * @license http://opensource.org/licenses/MIT
+ * @author Morozkin Andrey <andrey.dmitrievich@gmail.com>
+ */
 
 use Moro\Container7\Aliases;
 use Moro\Container7\Collection;
@@ -118,6 +125,50 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             $collection->append(['parameters']);
 
             verify($collection->asArray())->same([$container->get(Parameters::class)]);
+        });
+
+        $this->specify('Test collection methods "merge", "exclude", "with".', function () {
+            $container = new Container();
+
+            /** @var Tags $tags */
+            $tags = $container->get(Tags::class);
+            $tags->add(Aliases::class, Aliases::class);
+            $tags->add(Parameters::class, Parameters::class);
+            $tags->add(Container::class, Container::class);
+
+            $collection = new Collection($container, ArrayAccess::class);
+            $collection->append([Parameters::class]);
+            $collection = $collection->merge(Aliases::class);
+
+            verify($collection->asArray())->same([
+                $container->get(Parameters::class),
+                $container->get(Aliases::class),
+            ]);
+
+            $collection = $collection->exclude(Parameters::class);
+
+            verify($collection->asArray())->same([
+                $container->get(Aliases::class),
+            ]);
+
+            $collection = $collection->merge(Aliases::class);
+
+            verify($collection->asArray())->same([
+                $container->get(Aliases::class),
+            ]);
+
+            $collection = $collection->merge(Container::class);
+
+            verify($collection->asArray())->same([
+                $container->get(Aliases::class),
+                $container,
+            ]);
+
+            $collection = $collection->with(Tags::REGULAR);
+
+            verify($collection->asArray())->same([
+                $container,
+            ]);
         });
     }
 }

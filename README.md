@@ -238,6 +238,24 @@ $collection = $container->getCollection('someTag');
 
 Collection implements Iterator interface and you can use it in foreach.
 
+#### Manipulation with collection
+
+```php
+<?php
+use Moro\Container7\Container;
+
+$container = new Container();
+$collection = $container->getCollection('A');
+// Collection contains services with tag "A".
+$collection = $collection->merge('B');
+// Collection contains services with tags "A" or "B".
+$collection = $collection->exclude('A');
+// Collection contains services with tag "B" and without tag "A".
+$collection = $collection->merge('B')->with('C');
+// The collection contains services that are marked
+// with "B" and "C" tags simultaneously.
+```
+
 ### Configuration
 
 Container7 support configuration files in JSON format. You can create provider from that files.

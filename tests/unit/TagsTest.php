@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the package moro/container7
+ *
+ * @see https://github.com/Moro4125/container7
+ * @license http://opensource.org/licenses/MIT
+ * @author Morozkin Andrey <andrey.dmitrievich@gmail.com>
+ */
 
 use Moro\Container7\Aliases;
 use Moro\Container7\Tags;
@@ -57,6 +64,10 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
             verify($tags->hasTag('t3'))->true();
             verify($tags->keysByTag('t3'))->same(['i1', 'i2', 'i3']);
+
+            $tags->add('t4', 't4', 1);
+            verify($tags->keysByTag('t4'))->same(['t4']);
+            verify($tags->tagsForKey('t4'))->same(['t4']);
         });
 
         $this->specify('Check bad float priorities.', function () {
