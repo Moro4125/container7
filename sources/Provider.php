@@ -39,14 +39,14 @@ final class Provider extends Definition
         }
     }
 
-    static function fromConfiguration(string $name, Parameters $configuration): Provider
+    static function fromParameters(string $name, Parameters $parameters): Provider
     {
-        if ($configuration->has('container')) {
-            $containerConf = $configuration->raw('container');
-            $configuration->del('container');
+        if ($parameters->has('container')) {
+            $containerConf = $parameters->raw('container');
+            $parameters->del('container');
         }
 
-        $instance = new static($configuration);
+        $instance = new self($parameters);
         $instance->setId($name);
 
         if (isset($containerConf)) {
@@ -54,6 +54,12 @@ final class Provider extends Definition
         }
 
         return $instance;
+    }
+
+    static function fromConfiguration(string $name, $configuration): Provider
+    {
+        $parameters = is_array($configuration) ? new Parameters(['container' => $configuration]) : $configuration;
+        return self::fromParameters($name, $parameters);
     }
 
     private function _initContainer(array $config)

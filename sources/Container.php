@@ -40,7 +40,7 @@ class Container implements ContainerInterface, \Serializable
         $this->addProvider(new Provider());
 
         if ($configuration) {
-            $this->addProvider(Provider::fromConfiguration('configuration', $configuration));
+            $this->addProvider(Provider::fromParameters('configuration', $configuration));
         }
     }
 
