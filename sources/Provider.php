@@ -29,24 +29,28 @@ final class Provider extends Definition
     {
         parent::__construct($this);
 
-        if ($configuration) {
-            $this->_configuration = clone $configuration;
-            $this->addTuner(Parameters::class, 'configure', null, Parameters::class);
-        } else {
+        if (empty($configuration)) {
             $this->addSingleton(Aliases::class, 'aliases', null, true);
             $this->addSingleton(Tags::class, 'tags', [Aliases::class], true);
             $this->addSingleton(Parameters::class, 'parameters', null, true);
+        } elseif ($configuration->raw()) {
+            $this->_configuration = clone $configuration;
+            $this->addTuner(Parameters::class, 'configure', null, Parameters::class);
         }
     }
 
     static function fromConfiguration(string $name, Parameters $configuration): Provider
     {
+        if ($configuration->has('container')) {
+            $containerConf = $configuration->raw('container');
+            $configuration->del('container');
+        }
+
         $instance = new static($configuration);
         $instance->setId($name);
 
-        if ($instance->_configuration->has('container')) {
-            $instance->_initContainer($configuration->raw('container'));
-            $instance->_configuration->del('container');
+        if (isset($containerConf)) {
+            $instance->_initContainer($containerConf);
         }
 
         return $instance;
