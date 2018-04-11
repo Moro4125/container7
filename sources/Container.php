@@ -102,8 +102,14 @@ class Container implements ContainerInterface, \Serializable
 
         foreach ($definition->getTuners() as list($interface, $method, $result, $args)) {
             if (isset($this->_mapping[$interface]) && isset($this->_factories[$this->_mapping[$interface]][0])) {
-                $message = $method ? TooLateForExtendException::MSG1 : TooLateForExtendException::MSG2;
-                throw new TooLateForExtendException(sprintf($message, $id, $method));
+                if ($result !== null) {
+                    $message = $method ? TooLateForExtendException::MSG1 : TooLateForExtendException::MSG2;
+                    throw new TooLateForExtendException(sprintf($message, $id, $method));
+                }
+
+                $service = $this->_factories[$this->_mapping[$interface]][0];
+                $arguments = $this->_prepareArguments(isset($args) ? $args : [$this], null, $service);
+                call_user_func_array([$instance, $method], $arguments);
             } else {
                 $this->_extends[$interface][(int)($result !== null)][] = [$instance, $method, $result, $args];
             }

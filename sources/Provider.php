@@ -69,9 +69,9 @@ final class Provider extends Definition
                 $index++;
                 $instructions = [];
 
-                $target = $interface = ($defs['target'] ?? null);
+                $target = $defs['target'] ?? null;
                 $replace = $defs['class'] ?? null;
-                $interface = $defs['interface'] ?? ($interface ?: $replace);
+                $interface = $defs['interface'] ?? $replace;
                 $alias = (string)(empty($bad[$defs['alias'] ?? 'aliases']) ? $defs['alias'] : $index);
                 $final = !empty($defs['final']);
                 $path = $id . '::' . ($target ?: $alias);
@@ -89,7 +89,7 @@ final class Provider extends Definition
                 } elseif ($singleton === false) {
                     $this->addFactory($interface, $alias, [Container::class], $final);
                 } else {
-                    $this->addTuner($target, $alias, [Container::class], $replace);
+                    $this->addTuner($target, $alias, [Container::class], $replace ?? $interface);
                     $instructions[] = [self::CODE_CUT_ARGUMENT];
                 }
 

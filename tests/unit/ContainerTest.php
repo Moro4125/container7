@@ -359,10 +359,41 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
             });
         });
 
+        $this->specify('Provider extends initialized service', function () {
+            /** @var Aliases $aliases */
+            $aliases = $this->container->get(Aliases::class);
+            verify($aliases)->isInstanceOf(Aliases::class);
+            $this->container->addProvider(Provider::fromConfiguration('A', new Parameters([
+                'container' => [
+                    'extends' => [
+                        [
+                            'target' => Aliases::class,
+                            'calls' => [
+                                [
+                                    'method' => 'add',
+                                    'args' => ['P', 'M'],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ])));
+            verify($aliases->resolve('P'))->same('M');
+        });
+
         $this->specify('Provider too late for extends', function () {
             $this->assertThrows(TooLateForExtendException::class, function () {
                 verify($this->container->get(Aliases::class))->isInstanceOf(Aliases::class);
-                $this->container->addProvider(ProviderH::class);
+                $this->container->addProvider(Provider::fromConfiguration('B', new Parameters([
+                    'container' => [
+                        'extends' => [
+                            [
+                                'interface' => Aliases::class,
+                                'target' => Aliases::class,
+                            ],
+                        ],
+                    ],
+                ])));
             });
         });
 
