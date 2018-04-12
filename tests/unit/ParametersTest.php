@@ -95,30 +95,53 @@ class ParametersTest extends \PHPUnit\Framework\TestCase
             verify($parameters->offsetGet('k2'))->same(2);
         });
 
-        $this->specify('Access to deep items by special keysByTag', function () {
+        $this->specify('Access to deep items by special keys', function () {
             $parameters = new Parameters();
             $parameters->add('k1', ['k1.1' => 'v1.1', 'k1.2' => ['k1.2.1' => 'v1.2.1']]);
 
-            verify($parameters->has('k1/k1.1'))->true();
-            verify($parameters->has('k1/k1.2'))->true();
-            verify($parameters->has('k1/k1.2/k1.2.1'))->true();
-            verify($parameters->has('k1/k1.2/k1.2.2'))->false();
-            verify($parameters->has('k1/k1.1/k1.1.1'))->false();
+            foreach ([true, false] as $flag) {
+                verify($parameters->has('k1/k1.1'))->true();
+                verify($parameters->has('k1/k1.2'))->true();
+                verify($parameters->has('k1/k1.2/k1.2.1'))->true();
+                verify($parameters->has('k1/k1.2/k1.2.2'))->same(!$flag);
+                verify($parameters->has('k1/k1.1/k1.1.1'))->false();
 
-            verify($parameters->get('k1/k1.1'))->same('v1.1');
-            verify($parameters->get('k1/k1.2'))->same(['k1.2.1' => 'v1.2.1']);
-            verify($parameters->get('k1/k1.2/k1.2.1'))->same('v1.2.1');
-            verify($parameters->get('k1/k1.2/k1.2.2'))->same(null);
+                verify($parameters->get('k1/k1.1'))->same('v1.1');
 
-            $parameters->add('k2', '%k1/k1.1%');
-            $parameters->add('k3', '%k1/k1.1% %k1/k1.2/k1.2.1%');
+                if ($flag) {
+                    verify($parameters->get('k1/k1.2'))->same(['k1.2.1' => 'v1.2.1']);
+                    verify($parameters->get('k1/k1.2/k1.2.1'))->same('v1.2.1');
+                    verify($parameters->get('k1/k1.2/k1.2.2'))->same(null);
 
-            verify($parameters->get('k2'))->same('v1.1');
-            verify($parameters->get('k3'))->same('v1.1 v1.2.1');
-            verify($parameters->get('k1/k1.1/k1.1.1/k1.1.1.1'))->same(null);
+                    $parameters->add('k2', '%k1/k1.1%');
+                    $parameters->add('k3', '%k1/k1.1% %k1/k1.2/k1.2.1%');
+                }
 
-            verify($parameters->get('k4', false))->false();
-            verify($parameters->get('k1/k2.1/k0', false))->false();
+                verify($parameters->get('k2'))->same('v1.1');
+                verify($parameters->get('k1/k1.1/k1.1.1/k1.1.1.1'))->same(null);
+
+                verify($parameters->get('k4', false))->false();
+                verify($parameters->get('k1/k2.1/k0', false))->false();
+
+                if ($flag) {
+                    verify($parameters->get('k3'))->same('v1.1 v1.2.1');
+
+                    $parameters->set('k1/k1.2/k1.2.1/k1.2.1.1', 'v1.2.1.1');
+                    verify($parameters->get('k1/k1.2/k1.2.1/k1.2.1.1'))->same('v1.2.1.1');
+
+                    $parameters->add('k1/k1.2/k1.2.2/k1.2.2.1', 'v1.2.2.1');
+                    verify($parameters->get('k1/k1.2/k1.2.2/k1.2.2.1'))->same('v1.2.2.1');
+
+                    verify($parameters->get('k1/k1.2'))->same([
+                        'k1.2.2' => ['k1.2.2.1' => 'v1.2.2.1'],
+                        'k1.2.1' => ['k1.2.1.1' => 'v1.2.1.1']
+                    ]);
+                    verify($parameters->get('k1/k1.2/k1.2.1'))->same(['k1.2.1.1' => 'v1.2.1.1']);
+                    verify($parameters->get('k1/k1.2/k1.2.2'))->same(['k1.2.2.1' => 'v1.2.2.1']);
+
+                    verify($parameters->get('k3'))->same('v1.1 [array]');
+                }
+            }
         });
 
         $this->specify('Check array merge feature', function () {

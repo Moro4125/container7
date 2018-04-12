@@ -45,6 +45,7 @@ final class Parameters implements ArrayAccess
         }
 
         unset($parameters['@extends']);
+
         return new Parameters($parameters);
     }
 
@@ -73,14 +74,39 @@ final class Parameters implements ArrayAccess
 
     public function add(string $key, $value)
     {
-        $this->_parameters[$key] = (isset($this->_parameters[$key]) && is_array($this->_parameters[$key]) && is_array($value))
-            ? self::merge($this->_parameters[$key], $value)
-            : $value;
+        while ($pos = strrpos($key, '/')) {
+            $index = substr($key, $pos + 1);
+            $key = substr($key, 0, $pos);
+            $value = [$index => $value];
+        }
+
+        $this->_parameters[$key] = (isset($this->_parameters[$key]) && is_array($this->_parameters[$key]) && is_array($value)) ? self::merge($this->_parameters[$key],
+            $value) : $value;
     }
 
     public function set(string $key, $value)
     {
-        $this->_parameters[$key] = $value;
+        $cursor = &$this->_parameters;
+
+        while ($pos = strpos($key, '/')) {
+            $index = substr($key, 0, $pos);
+            $key = substr($key, $pos + 1);
+
+            if (!array_key_exists($index, $cursor) || !is_array($cursor[$index])) {
+                $key = $index . '/' . $key;
+                break;
+            }
+
+            $cursor = &$cursor[$index];
+        }
+
+        while ($pos = strrpos($key, '/')) {
+            $index = substr($key, $pos + 1);
+            $key = substr($key, 0, $pos);
+            $value = [$index => $value];
+        }
+
+        $cursor[$key] = $value;
     }
 
     public function has(string $key)
@@ -147,6 +173,7 @@ final class Parameters implements ArrayAccess
 
             $value = preg_replace_callback('{%(.+?)%}', function ($match) {
                 $value = $this->has($match[1]) ? $this->get($match[1]) : $match[0];
+
                 return is_scalar($value) ? (string)$value : '[' . gettype($value) . ']';
             }, $value);
         }
