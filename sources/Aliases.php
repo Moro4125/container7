@@ -14,12 +14,23 @@ namespace Moro\Container7;
  */
 final class Aliases
 {
+    /** @var Aliases */
+    private $_context;
     private $_map = [];
     private $_invert = [];
 
+    public function setContext(Aliases $context = null)
+    {
+        $this->_context = $context;
+    }
+
     public function add(string $alias, string $interface)
     {
-        $interface = $this->_map[$interface] ?? $interface;
+        if ($this->_context && $real = $this->_context->resolve($interface)) {
+            $interface = $real;
+        } else {
+            $interface = $this->_map[$interface] ?? $interface;
+        }
 
         if (isset($this->_invert[$alias])) {
             foreach ($this->_invert[$alias] as $key) {

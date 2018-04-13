@@ -32,6 +32,7 @@ use Moro\Container7\Test\ProviderF;
 use Moro\Container7\Test\ProviderG;
 use Moro\Container7\Test\ProviderH;
 use Moro\Container7\Test\ProviderI;
+use Moro\Container7\Test\ProviderJ;
 use Moro\Container7\Test\ServiceA1;
 use Moro\Container7\Test\ServiceA2;
 use Moro\Container7\Test\ServiceA3;
@@ -432,6 +433,22 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         $this->assertThrows(MixedException::class, function () {
             $this->container->addProvider(ProviderI::class);
         });
+    }
+
+    public function testProviderJ()
+    {
+        $this->container->addProvider(ProviderJ::class);
+
+        $serviceA1 = $this->container->get(ServiceA1::class);
+        verify($this->container->getCollection(ServiceA1::class)->asArray())->same([$serviceA1]);
+        verify($this->container->get('alias1'))->same($serviceA1);
+
+        $serviceA2 = $this->container->get(ServiceA2::class);
+        $collection = $this->container->getCollection(ServiceA2::class);
+        verify($collection->asArray())->same([$serviceA2]);
+        verify($collection->with('tag2')->asArray())->same([$serviceA2]);
+        verify($collection->with('tag3')->asArray())->same([$serviceA2]);
+        verify($collection->with('tag4')->asArray())->same([$serviceA2]);
     }
 
     public function testContainerFromConfiguration()

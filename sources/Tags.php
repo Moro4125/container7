@@ -16,13 +16,21 @@ final class Tags
 {
     const REGULAR = 'regular';
 
+    /** @var Aliases */
     private $_aliases;
+    /** @var Aliases */
+    private $_context;
     private $_byTag = [];
     private $_byKey = [];
 
     public function __construct(Aliases $aliases)
     {
         $this->_aliases = $aliases;
+    }
+
+    public function setContext(Aliases $context = null)
+    {
+        $this->_context = $context;
     }
 
     public function register(string $tag)
@@ -34,7 +42,12 @@ final class Tags
 
     public function add(string $tag, string $key, float $priority = null)
     {
-        $key = $this->_aliases->resolve($key) ?: $key;
+        if ($this->_context && $real = $this->_context->resolve($key)) {
+            $key = $real;
+        } else {
+            $key = $this->_aliases->resolve($key) ?: $key;
+        }
+
         $this->_byTag[$tag][$key] = ($priority === null) ? 0.5 : $priority;
         $this->_byKey[$key][] = $tag;
     }

@@ -62,6 +62,7 @@ class Container implements ContainerInterface, \Serializable
 
         $instance = $definition->getProvider();
         $this->_providers[$id] = $instance;
+        $aliases = new Aliases();
 
         foreach ([true, false] as $singleton) {
             $list = $singleton ? $definition->getSingletons() : $definition->getFactories();
@@ -88,7 +89,11 @@ class Container implements ContainerInterface, \Serializable
                 }
 
                 $index = count($this->_factories);
-                $this->_mapping[$id . '::' . $method] = $index;
+                $uniqueId = $id . '::' . $method;
+                $this->_mapping[$uniqueId] = $index;
+
+                $aliases->add($method, $uniqueId);
+                $aliases->add($interface, $uniqueId);
 
                 if (!isset($this->_mapping[$interface]) || empty($this->_factories[$this->_mapping[$interface]][4])) {
                     $this->_mapping[$interface] = $index;
@@ -109,9 +114,26 @@ class Container implements ContainerInterface, \Serializable
 
                 $service = $this->_factories[$this->_mapping[$interface]][0];
                 $arguments = $this->_prepareArguments(isset($args) ? $args : [$this], null, $service);
-                call_user_func_array([$instance, $method], $arguments);
+
+                if ($service instanceof Aliases) {
+                    try {
+                        $service->setContext($aliases);
+                        call_user_func_array([$instance, $method], $arguments);
+                    } finally {
+                        $service->setContext(null);
+                    }
+                } elseif ($service instanceof Tags) {
+                    try {
+                        $service->setContext($aliases);
+                        call_user_func_array([$instance, $method], $arguments);
+                    } finally {
+                        $service->setContext(null);
+                    }
+                } else {
+                    call_user_func_array([$instance, $method], $arguments);
+                }
             } else {
-                $this->_extends[$interface][(int)($result !== null)][] = [$instance, $method, $result, $args];
+                $this->_extends[$interface][(int)($result !== null)][] = [$instance, $method, $result, $args, $aliases];
             }
         }
 
@@ -199,7 +221,14 @@ class Container implements ContainerInterface, \Serializable
 
         /** @var Tags $tags */
         if (($tags = $this->get(Tags::class)) && $tags->hasTag($tagOrInterface)) {
-            return (new Collection($this))->append($tags->keysByTag($tagOrInterface));
+            if (!($keys = $tags->keysByTag($tagOrInterface)) && isset($this->_mapping[$tagOrInterface])) {
+                // Unique situation, when interface registered as tag and there is only one instance of it.
+                $index = $this->_mapping[$tagOrInterface];
+                $provider = array_search($this->_factories[$index][1], $this->_providers);
+                $keys = [$provider . '::' . $this->_factories[$index][2]];
+            }
+
+            return (new Collection($this))->append($keys);
         }
 
         throw new CollectionNotFoundException(sprintf(CollectionNotFoundException::MSG, $tagOrInterface));
@@ -225,9 +254,31 @@ class Container implements ContainerInterface, \Serializable
         $used[$interface] = true;
 
         if (!empty($this->_extends[$interface][0])) {
-            foreach ($this->_extends[$interface][0] as list($provider, $method, , $args)) {
-                $arguments = $this->_prepareArguments(isset($args) ? $args : [$this], null, $instance);
-                call_user_func_array([$provider, $method], $arguments);
+            if ($instance instanceof Aliases) {
+                foreach ($this->_extends[$interface][0] as list($provider, $method, , $args, $context)) {
+                    $arguments = $this->_prepareArguments($args ?? [$this], null, $instance);
+                    try {
+                        $instance->setContext($context);
+                        call_user_func_array([$provider, $method], $arguments);
+                    } finally {
+                        $instance->setContext(null);
+                    }
+                }
+            } elseif ($instance instanceof Tags) {
+                foreach ($this->_extends[$interface][0] as list($provider, $method, , $args, $context)) {
+                    $arguments = $this->_prepareArguments($args ?? [$this], null, $instance);
+                    try {
+                        $instance->setContext($context);
+                        call_user_func_array([$provider, $method], $arguments);
+                    } finally {
+                        $instance->setContext(null);
+                    }
+                }
+            } else {
+                foreach ($this->_extends[$interface][0] as list($provider, $method, , $args,)) {
+                    $arguments = $this->_prepareArguments($args ?? [$this], null, $instance);
+                    call_user_func_array([$provider, $method], $arguments);
+                }
             }
         }
 

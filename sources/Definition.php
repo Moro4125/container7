@@ -73,10 +73,16 @@ class Definition
         return $this;
     }
 
-    final public function addTuner(string $interface, string $method, array $args = null, string $replace = null)
+    final public function addTuner(string $interface, string $method = null, array $args = null, string $replace = null)
     {
         assert($interface && ($method || $replace));
-        $this->_tuners[$method] = [$interface, $method, $replace, $args];
+
+        if ($method) {
+            $this->_tuners[$method] = [$interface, $method, $replace, $args];
+        } else {
+            $this->_tuners[] = [$interface, (string)$method, $replace, $args];
+        }
+
         return $this;
     }
 
