@@ -1,6 +1,6 @@
 # Container7
 
-[![Latest Version 1.1](https://img.shields.io/github/release/Moro4125/container7.svg?style=flat-square)](https://github.com/Moro4125/container7/releases)
+[![Latest Version 1.2](https://img.shields.io/github/release/Moro4125/container7.svg?style=flat-square)](https://github.com/Moro4125/container7/releases)
 [![Build Status](https://img.shields.io/travis/Moro4125/container7.svg?style=flat-square)](https://travis-ci.org/Moro4125/container7)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
@@ -199,9 +199,10 @@ class SomeProvider {
         return new Service();
     }
     function aliases(Aliases $aliases) {
+        // Add alias for unique interface in provider
         $aliases->add('kernel', Service::class);
-        // or
-        $aliases->add('kernel', __CLASS__.'::someService');
+        // or you can use method name
+        $aliases->add('kernel', 'someService');
     }
 }
 ```
@@ -223,8 +224,12 @@ use Moro\Container7\Tags;
 
 class SomeProvider {
     function tags(Tags $tags) {
+        // Add tag for unique interface in provider
         $tags->add('someTag', ServiceAlpha::class);
         $tags->add('someTag', ServiceBeta::class);
+        // or you can use method name
+        $tags->add('someTag', 'getServiceAlpha');
+        $tags->add('someTag', 'getServiceBeta');
     }
 }
 ```
@@ -422,6 +427,22 @@ If you need to replace the service instance use that definition:
       }
     ]
   }
+}
+```
+
+### Dynamic services
+
+```php
+<?php
+use Moro\Container7\Container;
+use Moro\Container7\Provider;
+
+class DynamicProvider {
+    function boot(Container $container) {
+        $configuration = [];
+        // ... dynamic create of configuration array ...
+        $container->addProvider(Provider::fromConfiguration(__METHOD__, $configuration));
+    }
 }
 ```
 
