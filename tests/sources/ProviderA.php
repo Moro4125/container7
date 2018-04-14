@@ -1,5 +1,13 @@
 <?php
 /**
+ * This file is part of the package moro/container7
+ *
+ * @see https://github.com/Moro4125/container7
+ * @license http://opensource.org/licenses/MIT
+ * @author Morozkin Andrey <andrey.dmitrievich@gmail.com>
+ */
+
+/**
  * Class ProviderA
  */
 
@@ -51,7 +59,13 @@ class ProviderA
         return $service;
     }
 
-    public function extendA5(ServiceA5 $service): ?ServiceA6
+    public function extendA5_1(ServiceA5 $service): ?ServiceA6
+    {
+        unset($service);
+        return null;
+    }
+
+    public function extendA5_2(ServiceA5 $service): ?ServiceA6
     {
         $newService = new ServiceA6();
         $newService->setValue5($service->getValue5());

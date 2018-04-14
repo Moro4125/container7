@@ -449,6 +449,9 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         verify($collection->with('tag2')->asArray())->same([$serviceA2]);
         verify($collection->with('tag3')->asArray())->same([$serviceA2]);
         verify($collection->with('tag4')->asArray())->same([$serviceA2]);
+
+        $configuration = ['extends' => [['target' => Tags::class]]];
+        $this->container->addProvider(Provider::fromConfiguration(__METHOD__, $configuration));
     }
 
     public function testContainerFromConfiguration()

@@ -290,8 +290,12 @@ class Container implements ContainerInterface, \Serializable
                     try {
                         $arguments = isset($args) ? $args : [$this];
                         $arguments = $this->_prepareArguments($arguments, null, $instance);
-                        $instance = call_user_func_array([$provider, $method], $arguments);
 
+                        if (!$object = call_user_func_array([$provider, $method], $arguments)) {
+                            continue;
+                        }
+
+                        $instance = $object;
                         $used[$class] = $used[$class] ?? in_array($instance, end(self::$_lastInstances)) ?: null;
                     } finally {
                         array_pop(self::$_lastInstances);

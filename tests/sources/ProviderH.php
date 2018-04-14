@@ -1,5 +1,13 @@
 <?php
 /**
+ * This file is part of the package moro/container7
+ *
+ * @see https://github.com/Moro4125/container7
+ * @license http://opensource.org/licenses/MIT
+ * @author Morozkin Andrey <andrey.dmitrievich@gmail.com>
+ */
+
+/**
  * Class ProviderH
  */
 
@@ -40,6 +48,12 @@ class ProviderH
     public function getServiceH4(): ServiceH4
     {
         return new ServiceH4();
+    }
+
+    public function initServiceH4(ServiceH4 $service): ?ServiceH5
+    {
+        unset($service);
+        return new ServiceH5();
     }
 
     public function getServiceH5(): ServiceH5
@@ -84,6 +98,6 @@ class ProviderH
 
     public function definition(Definition $definition)
     {
-        $definition->addTuner(ServiceH4::class, '__construct', [], Definition::class);
+        $definition->addTuner(ServiceH7::class, null, null, ServiceH7::class);
     }
 }
