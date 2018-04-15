@@ -12,6 +12,7 @@ use Moro\Container7\Collection;
 use Moro\Container7\Container;
 use Moro\Container7\Exception\BadInstanceException;
 use Moro\Container7\Exception\BadMethodDefinitionException;
+use Moro\Container7\Exception\CollectionBrokenException;
 use Moro\Container7\Exception\CollectionNotFoundException;
 use Moro\Container7\Exception\DuplicateProviderException;
 use Moro\Container7\Exception\FactoryException;
@@ -118,14 +119,12 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         verify($container->get(Container::class))->isInstanceOf(Container::class);
         verify($container->get(Container::class))->same($container->get(Container::class));
 
-        /** @noinspection PhpUnhandledExceptionInspection */
         $this->specify('Check ServiceNotFound exception (1)', function () {
             $this->assertThrows(ServiceNotFoundException::class, function () {
                 $this->container->get('Unknown class name');
             });
         });
 
-        /** @noinspection PhpUnhandledExceptionInspection */
         $this->specify('Check CollectionNotFound exception (1)', function () {
             $this->assertThrows(CollectionNotFoundException::class, function () {
                 $this->container->getCollection('Unknown class name');
@@ -136,10 +135,27 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         $aliases = $this->container->get(Aliases::class);
         $aliases->add('A', 'B');
 
-        /** @noinspection PhpUnhandledExceptionInspection */
         $this->specify('Check ServiceNotFound exception (2)', function () {
             $this->assertThrows(ServiceNotFoundException::class, function () {
                 $this->container->get('A');
+            });
+        });
+
+        $this->specify('Test Collection factory', function () {
+            verify($this->container->get(Collection::class))->isInstanceOf(Collection::class);
+
+            /** @var Collection $collection */
+            $collection = $this->container->get(Collection::class, ['aliases']);
+            verify($collection->asArray())->same(['aliases' => $this->container->get(Aliases::class)]);
+
+            /** @var Collection $collection */
+            $collection = $this->container->get(Collection::class, ['aliases'], Aliases::class);
+            verify($collection->asArray())->same(['aliases' => $this->container->get(Aliases::class)]);
+
+            /** @var Collection $collection */
+            $collection = $this->container->get(Collection::class, ['aliases'], Parameters::class);
+            $this->assertThrows(CollectionBrokenException::class, function () use ($collection) {
+                $collection->asArray();
             });
         });
     }

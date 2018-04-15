@@ -228,7 +228,7 @@ class Container implements ContainerInterface, \Serializable
                 $keys = [$provider . '::' . $this->_factories[$index][2]];
             }
 
-            return (new Collection($this))->append($keys);
+            return $this->get(Collection::class, $keys, isset($index) ? $tagOrInterface : null);
         }
 
         throw new CollectionNotFoundException(sprintf(CollectionNotFoundException::MSG, $tagOrInterface));

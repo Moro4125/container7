@@ -11,6 +11,7 @@ use Moro\Container7\Aliases;
 use Moro\Container7\Collection;
 use Moro\Container7\Container;
 use Moro\Container7\Definition;
+use Moro\Container7\Exception\CollectionBrokenException;
 use Moro\Container7\Parameters;
 use Moro\Container7\Provider;
 use Moro\Container7\Tags;
@@ -76,7 +77,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         verify($collection->current())->isInstanceOf(Parameters::class);
 
         $this->specify('We ask service without required interface', function () use ($collection) {
-            $this->assertThrows(\RuntimeException::class, function () use ($collection) {
+            $this->assertThrows(CollectionBrokenException::class, function () use ($collection) {
                 $collection->next();
 
                 verify($collection->valid())->true();
@@ -96,9 +97,9 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $collection->add('notObject');
 
         $this->specify('Test exception for value, that is not object', function () use ($collection) {
-            $eMessage = 'Collection can contains only objects.';
+            $eMessage = CollectionBrokenException::MSG_1;;
 
-            $this->assertThrows([RuntimeException::class, $eMessage], function () use ($collection) {
+            $this->assertThrows([CollectionBrokenException::class, $eMessage], function () use ($collection) {
                 $collection->rewind();
 
                 verify($collection->valid())->true();

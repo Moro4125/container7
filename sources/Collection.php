@@ -11,7 +11,7 @@ namespace Moro\Container7;
 
 use Countable;
 use Iterator;
-use RuntimeException;
+use Moro\Container7\Exception\CollectionBrokenException;
 
 /**
  * Class Collection
@@ -86,12 +86,12 @@ class Collection implements Iterator, Countable
         $value = $this->_container->get($alias);
 
         if ($this->_interface && !is_object($value)) {
-            throw new RuntimeException('Collection can contains only objects.');
+            throw new CollectionBrokenException(CollectionBrokenException::MSG_1);
         }
 
         if ($this->_interface && !$value instanceof $this->_interface) {
-            $message = 'Collection can contains instance of "%1$s". But "%2$s" found.';
-            throw new RuntimeException(sprintf($message, $this->_interface, get_class($value)));
+            $message = sprintf(CollectionBrokenException::MSG_2, $this->_interface, get_class($value));
+            throw new CollectionBrokenException($message);
         }
 
         return $value;

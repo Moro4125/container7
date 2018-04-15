@@ -34,6 +34,7 @@ final class Provider extends Definition
             $this->addSingleton(Aliases::class, 'aliases', null, true);
             $this->addSingleton(Tags::class, 'tags', [Aliases::class], true);
             $this->addSingleton(Parameters::class, 'parameters', null, true);
+            $this->addFactory(Collection::class, 'collection');
         } elseif ($configuration->raw()) {
             $this->_configuration = clone $configuration;
             $this->addTuner(Parameters::class, 'configure', null, Parameters::class);
@@ -346,5 +347,15 @@ final class Provider extends Definition
         }
 
         return $parameters;
+    }
+
+    public function collection(Container $container, ...$arguments): Collection
+    {
+        $items = array_shift($arguments) ?? [];
+        $interface = array_shift($arguments);
+
+        $collection = new Collection($container, $interface);
+        $collection->append($items);
+        return $collection;
     }
 }
