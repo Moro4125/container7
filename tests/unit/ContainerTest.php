@@ -214,8 +214,10 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
             verify($this->container->hasCollection(ServiceA2::class))->true();
             verify($this->container->getCollection(ServiceA2::class))->isInstanceOf(Collection::class);
 
-            foreach ($this->container->getCollection(ServiceA2::class) as $index => $service) {
-                verify($this->container->get(${'name' . ($index + 1)}))->same($service);
+            $index = 0;
+            foreach ($this->container->getCollection(ServiceA2::class) as $service) {
+                $index++;
+                verify($this->container->get(${'name' . $index}))->same($service);
             }
         });
 
@@ -284,7 +286,8 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
             /** @var ServiceA7 $service */
             $service = $this->container->get(ServiceA7::class);
             verify($service)->isInstanceOf(ServiceA7::class);
-            verify($service->getCollection())->same([$this->container->get($name1), $this->container->get($name2)]);
+            $values = array_values($service->getCollection());
+            verify($values)->same([$this->container->get($name1), $this->container->get($name2)]);
         });
 
         /** @noinspection PhpUnhandledExceptionInspection */
@@ -440,15 +443,25 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         $this->container->addProvider(ProviderJ::class);
 
         $serviceA1 = $this->container->get(ServiceA1::class);
-        verify($this->container->getCollection(ServiceA1::class)->asArray())->same([$serviceA1]);
+        verify($this->container->getCollection(ServiceA1::class)->asArray())->same([
+            'Moro\\Container7\\Test\\ProviderJ::serviceA1' => $serviceA1
+        ]);
         verify($this->container->get('alias1'))->same($serviceA1);
 
         $serviceA2 = $this->container->get(ServiceA2::class);
         $collection = $this->container->getCollection(ServiceA2::class);
-        verify($collection->asArray())->same([$serviceA2]);
-        verify($collection->with('tag2')->asArray())->same([$serviceA2]);
-        verify($collection->with('tag3')->asArray())->same([$serviceA2]);
-        verify($collection->with('tag4')->asArray())->same([$serviceA2]);
+        verify($collection->asArray())->same([
+            'Moro\\Container7\\Test\\ProviderJ::serviceA2' => $serviceA2
+        ]);
+        verify($collection->with('tag2')->asArray())->same([
+            'Moro\\Container7\\Test\\ProviderJ::serviceA2' => $serviceA2
+        ]);
+        verify($collection->with('tag3')->asArray())->same([
+            'Moro\\Container7\\Test\\ProviderJ::serviceA2' => $serviceA2
+        ]);
+        verify($collection->with('tag4')->asArray())->same([
+            'Moro\\Container7\\Test\\ProviderJ::serviceA2' => $serviceA2
+        ]);
 
         $configuration = ['extends' => [['target' => Tags::class]]];
         $this->container->addProvider(Provider::fromConfiguration(__METHOD__, $configuration));

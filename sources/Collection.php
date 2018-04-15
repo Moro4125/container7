@@ -104,7 +104,7 @@ class Collection implements Iterator, Countable
 
     public function key()
     {
-        return key($this->_collection);
+        return current($this->_collection) ?: null;
     }
 
     public function valid()

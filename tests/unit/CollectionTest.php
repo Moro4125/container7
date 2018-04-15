@@ -38,17 +38,17 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
         $collection->rewind();
         verify($collection->valid())->true();
-        verify($collection->key())->same(0);
+        verify($collection->key())->same('aliases');
         verify($collection->current())->isInstanceOf(Aliases::class);
 
         $collection->next();
         verify($collection->valid())->true();
-        verify($collection->key())->same(1);
+        verify($collection->key())->same('Moro\\Container7\\Provider::parameters');
         verify($collection->current())->isInstanceOf(Parameters::class);
 
         $collection->next();
         verify($collection->valid())->true();
-        verify($collection->key())->same(2);
+        verify($collection->key())->same('Moro\\Container7\\Tags');
         verify($collection->current())->isInstanceOf(Tags::class);
 
         $collection->next();
@@ -72,7 +72,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
         $collection->rewind();
         verify($collection->valid())->true();
-        verify($collection->key())->same(0);
+        verify($collection->key())->same('parameters');
         verify($collection->current())->isInstanceOf(Parameters::class);
 
         $this->specify('We ask service without required interface', function () use ($collection) {
@@ -80,7 +80,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
                 $collection->next();
 
                 verify($collection->valid())->true();
-                verify($collection->key())->same(1);
+                verify($collection->key())->same('Moro\\Container7\\Aliases');
 
                 $collection->current();
             });
@@ -102,7 +102,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
                 $collection->rewind();
 
                 verify($collection->valid())->true();
-                verify($collection->key())->same(0);
+                verify($collection->key())->same('notObject');
 
                 $collection->current();
             });
@@ -124,7 +124,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             $collection = new Collection($container, ArrayAccess::class);
             $collection->append(['parameters']);
 
-            verify($collection->asArray())->same([$container->get(Parameters::class)]);
+            verify($collection->asArray())->same(['parameters' => $container->get(Parameters::class)]);
         });
 
         $this->specify('Test collection methods "merge", "exclude", "with".', function () {
@@ -141,33 +141,33 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             $collection = $collection->merge(Aliases::class);
 
             verify($collection->asArray())->same([
-                $container->get(Parameters::class),
-                $container->get(Aliases::class),
+                'Moro\\Container7\\Parameters' => $container->get(Parameters::class),
+                'Moro\\Container7\\Aliases' => $container->get(Aliases::class),
             ]);
 
             $collection = $collection->exclude(Parameters::class);
 
             verify($collection->asArray())->same([
-                $container->get(Aliases::class),
+                'Moro\\Container7\\Aliases' => $container->get(Aliases::class),
             ]);
 
             $collection = $collection->merge(Aliases::class);
 
             verify($collection->asArray())->same([
-                $container->get(Aliases::class),
+                'Moro\\Container7\\Aliases' => $container->get(Aliases::class),
             ]);
 
             $collection = $collection->merge(Container::class);
 
             verify($collection->asArray())->same([
-                $container->get(Aliases::class),
-                $container,
+                'Moro\\Container7\\Aliases' => $container->get(Aliases::class),
+                'Moro\\Container7\\Container' => $container,
             ]);
 
             $collection = $collection->with(Tags::REGULAR);
 
             verify($collection->asArray())->same([
-                $container,
+                'Moro\\Container7\\Container' => $container,
             ]);
         });
     }
