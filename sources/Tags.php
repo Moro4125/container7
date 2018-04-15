@@ -40,16 +40,22 @@ final class Tags
         }
     }
 
-    public function add(string $tag, string $key, float $priority = null)
+    public function add(string $tag, string $key, $meta = null)
     {
+        assert(is_null($meta) || is_numeric($meta) || is_array($meta));
+
         if ($this->_context && $real = $this->_context->resolve($key)) {
             $key = $real;
         } else {
             $key = $this->_aliases->resolve($key) ?: $key;
         }
 
-        $this->_byTag[$tag][$key] = ($priority === null) ? 0.5 : $priority;
-        $this->_byKey[$key][] = $tag;
+        $meta = is_array($meta) ? $meta : ['priority' => $meta];
+        $priority = (float)($meta['priority'] ?? 0.5);
+        unset($meta['priority']);
+
+        $this->_byTag[$tag][$key] = $priority;
+        $this->_byKey[$key][$tag] = $meta ?: null;
     }
 
     public function hasKey($key): bool
@@ -81,6 +87,11 @@ final class Tags
             return [];
         }
 
-        return array_unique($this->_byKey[$key]);
+        return array_keys($this->_byKey[$key]);
+    }
+
+    public function metaByTagAndKey(string $tag, string $key): ?array
+    {
+        return $this->_byKey[$key][$tag] ?? null;
     }
 }

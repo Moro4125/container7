@@ -510,6 +510,16 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
             verify($service->getValue5())->same($serviceA2);
             verify($service->getValue6())->same(3);
         });
+
+        $this->specify('Test tags metadata', function () {
+            /** @var ServiceA7 $service */
+            $service = $this->container->get(ServiceA7::class);
+            verify($service->getValue7())->same(777);
+
+            /** @var ServiceA5 $service */
+            $service = $this->container->get(ServiceA5::class);
+            verify($service->getValue5())->null();
+        });
     }
 
     protected function setUp()

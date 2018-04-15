@@ -24,6 +24,7 @@ final class Provider extends Definition
     /** @var Parameters */
     protected $_configuration;
     protected $_instructions;
+    protected $_tag;
 
     public function __construct(Parameters $configuration = null)
     {
@@ -67,8 +68,12 @@ final class Provider extends Definition
         $id = $this->getId();
         $index = null;
         $simple = [Aliases::class => 'aliases', Parameters::class => 'parameters', Tags::class => 'tags'];
-        $bad = array_flip(['__construct', '__call', 'aliases', 'tags', 'parameters', 'configure']);
+        $bad = array_flip(get_class_methods($this));
         $map = ['singletons' => true, 'factories' => false, 'extends' => null];
+
+        foreach ($config['services'] ?? [] as $defs) {
+            $config[empty($defs['factory']) ? 'singletons' : 'factories'][] = $defs;
+        }
 
         foreach (array_intersect_key($map, $config) as $key => $singleton) {
             foreach (array_reverse((array)$config[$key]) as $defs) {
@@ -135,8 +140,8 @@ final class Provider extends Definition
                 if (isset($defs['tags'])) {
                     foreach ($defs['tags'] as $k => $v) {
                         $tag = is_string($k) ? $k : $v;
-                        $priority = is_string($k) ? (float)$v : null;
-                        $config['tags'][] = [$tag, $path, $priority];
+                        $meta = is_string($k) ? $v : null;
+                        $config['tags'][] = [$tag, $path, $meta];
                     }
                 }
 
@@ -235,6 +240,7 @@ final class Provider extends Definition
                         array_unshift($instructions, $instruction);
                     } else {
                         array_shift($instructions);
+                        $this->_tag = null;
                         $list = null;
                     }
 
@@ -249,6 +255,8 @@ final class Provider extends Definition
     {
         /** @var Parameters $parameters */
         $parameters = null;
+        /** @var Tags $tags */
+        $tags = null;
 
         foreach ($args as &$value) {
             if (is_string($value)) {
@@ -266,12 +274,20 @@ final class Provider extends Definition
 
                 if ($value === '$collections') {
                     $arguments['collections'] = $container->getCollection($key)->asArray();
+                    $this->_tag = $this->_tag ?? $key;
+                    $key = null;
+                }
+
+                if ($value === '$meta' && $this->_tag) {
+                    $tags = $tags ?? $container->get(Tags::class);
+                    $meta = $tags->metaByTagAndKey($this->_tag, $arguments['index'] ?? '');
+                    $arguments['meta'] = $meta[$key] ?? null;
                     $key = null;
                 }
 
                 switch (substr($value, 0, 1)) {
                     case '$':
-                        $value = $arguments[substr($value, 1)];
+                        $value = $arguments[substr($value, 1)] ?? null;
                         break;
                     case '@':
                         $value = $container->get(substr($value, 1));

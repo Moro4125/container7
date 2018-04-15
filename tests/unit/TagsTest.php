@@ -16,6 +16,7 @@ use Moro\Container7\Tags;
 class TagsTest extends \PHPUnit\Framework\TestCase
 {
     use \Codeception\Specify;
+    use \Codeception\AssertThrows;
 
     // tests
     public function test()
@@ -86,5 +87,13 @@ class TagsTest extends \PHPUnit\Framework\TestCase
             verify($tags->keysByTag('t1'))->same(['i3', 'i2', 'i1', 'i4']);
         });
 
+        $this->specify('Test bad arguments.', function () {
+            $aliases = new Aliases();
+            $tags = new Tags($aliases);
+
+            $this->assertThrows(\AssertionError::class, function () use ($tags) {
+                $tags->add('t1', 'i1', new \ArrayObject());
+            });
+        });
     }
 }

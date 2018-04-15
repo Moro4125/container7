@@ -4,17 +4,22 @@
       "value3": 3,
       "class": "ArrayObject"
     },
-    "singletons": [
+    "services": [
       {
         "class": "Moro\\Container7\\Test\\ServiceA1",
         "tags": {
           "tag1": 2
         }
-      },
+      }
+    ],
+    "singletons": [
       {
         "class": "Moro\\Container7\\Test\\ServiceA2",
         "tags": {
-          "tag1": 1
+          "tag1": 1,
+          "tag2": {
+            "id": 777
+          }
         }
       },
       {
@@ -55,6 +60,29 @@
             "args": [
               "@Moro\\Container7\\Test\\ServiceA3->value",
               []
+            ]
+          }
+        ]
+      },
+      {
+        "class": "Moro\\Container7\\Test\\ServiceA7",
+        "calls": [
+          {
+            "foreach": "$collections[tag2]",
+            "method": "setValue7",
+            "args": [
+              "$meta[id]"
+            ]
+          }
+        ]
+      },
+      {
+        "class": "Moro\\Container7\\Test\\ServiceA5",
+        "calls": [
+          {
+            "method": "setValue5",
+            "args": [
+              "$meta[id]"
             ]
           }
         ]
