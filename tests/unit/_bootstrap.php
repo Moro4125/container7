@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the package moro/container7
+ *
+ * @see https://github.com/Moro4125/container7
+ * @license http://opensource.org/licenses/MIT
+ * @author Morozkin Andrey <andrey.dmitrievich@gmail.com>
+ */
 
 namespace Codeception;
 
@@ -8,6 +15,7 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
 
 /** @noinspection PhpUndefinedClassInspection */
+
 trait AssertThrows
 {
     /** @noinspection PhpConstructorStyleInspection */
@@ -24,12 +32,15 @@ trait AssertThrows
         $this->assertThrowsWithMessage($throws, false, $fn);
     }
 
+    /** @noinspection PhpUndefinedClassInspection */
+
     /**
      * Asserts that callback throws an exception with a message
      *
      * @param $throws
      * @param $message
      * @param callable $fn
+     * @throws \Throwable
      */
     public function assertThrowsWithMessage($throws, $message, callable $fn)
     {
@@ -56,7 +67,7 @@ trait AssertThrows
                 throw new AssertionFailedError("exception message '$message' was expected, but '" . $e->getMessage() . "' was received");
             }
 
-        } catch (\Throwable $e) {
+        } /** @noinspection PhpUndefinedClassInspection */ catch (\Throwable $e) {
             if ($throws) {
                 if ($throws !== get_class($e)) {
                     throw new AssertionFailedError("exception '$throws' was expected, but " . get_class($e) . ' was thrown');

@@ -53,9 +53,8 @@ class ProviderA
 
     public function getServiceA5(...$arguments): ServiceA5
     {
-        unset($arguments);
         $service = new ServiceA5();
-        $service->setValue5('v5');
+        $service->setValue5(array_shift($arguments) ?? 'v5');
         return $service;
     }
 
@@ -113,7 +112,8 @@ class ProviderA
 
     public function tags(Tags $tags)
     {
-        $tags->add('t2', self::class . '::getServiceA2_1');
-        $tags->add('t2', self::class . '::getServiceA2_2');
+        $tags->add('t2', 'getServiceA2_1');
+        $tags->add('t2', 'getServiceA2_2');
+        $tags->add('t5', 'getServiceA5');
     }
 }

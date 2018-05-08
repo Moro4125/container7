@@ -21,12 +21,19 @@ class Collection implements Iterator, Countable
     private $_container;
     private $_interface;
     private $_collection;
+    private $_arguments;
 
     public function __construct(Container $container, string $interface = null)
     {
         $this->_container = $container;
         $this->_interface = $interface;
         $this->_collection = [];
+    }
+
+    public function for(...$arguments): Collection
+    {
+        $this->_arguments = $arguments ?: null;
+        return $this;
     }
 
     public function count(): int
@@ -90,13 +97,20 @@ class Collection implements Iterator, Countable
         $this->_collection[] = $method ? $class . '::' . $method : $class;
     }
 
+    public function keys(): array
+    {
+        return $this->_collection;
+    }
+
     public function current()
     {
         if (false === $alias = current($this->_collection)) {
             return null;
         }
 
-        $value = $this->_container->get($alias);
+        $value = $this->_arguments
+            ? call_user_func_array([$this->_container, 'get'], array_merge([$alias], $this->_arguments))
+            : $this->_container->get($alias);
 
         if ($this->_interface && !is_object($value)) {
             throw new CollectionBrokenException(CollectionBrokenException::MSG_1);

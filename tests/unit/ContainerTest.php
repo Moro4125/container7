@@ -187,6 +187,18 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
             });
         });
 
+        $this->specify('Check collection with arguments for factory', function () {
+            $collection = $this->container->getCollection('t5');
+            $collection->for('b5');
+
+            verify($collection->count())->same(1);
+
+            /** @var ServiceA5 $service */
+            foreach ($collection as $service) {
+                verify($service->getValue5())->same('b5');
+            }
+        });
+
         $this->__testProviderA(ProviderA::class);
     }
 
@@ -385,20 +397,25 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
             verify($aliases)->isInstanceOf(Aliases::class);
             $this->container->addProvider(Provider::fromConfiguration('A', new Parameters([
                 'container' => [
+                    'factories' => [
+                        [
+                            'class' => ServiceA1::class
+                        ]
+                    ],
                     'extends' => [
                         [
                             'target' => Aliases::class,
                             'calls' => [
                                 [
                                     'method' => 'add',
-                                    'args' => ['P', 'M'],
+                                    'args' => ['P', ServiceA1::class],
                                 ],
                             ],
                         ],
                     ],
                 ],
             ])));
-            verify($aliases->resolve('P'))->same('M');
+            verify($aliases->resolve('P'))->same('A::1');
         });
 
         $this->specify('Provider too late for extends', function () {

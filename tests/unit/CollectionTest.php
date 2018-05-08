@@ -22,7 +22,8 @@ use Moro\Container7\Tags;
 class CollectionTest extends \PHPUnit\Framework\TestCase
 {
     use Codeception\Specify;
-    use Codeception\AssertThrows;
+    use /** @noinspection PhpUndefinedClassInspection */
+        Codeception\AssertThrows;
 
     public function testCollectionWithoutInterface()
     {
@@ -58,6 +59,11 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         verify($collection->current())->same(null);
 
         verify($collection->count())->same(3);
+        verify($collection->keys())->same(['aliases', 'Moro\\Container7\\Provider::parameters', Tags::class]);
+
+        verify($collection->merge('Z')->count())->same(3);
+        verify($collection->exclude('Z')->count())->same(3);
+        verify($collection->with('Z')->count())->same(0);
     }
 
     public function testCollectionWithInterface()
