@@ -45,24 +45,37 @@ class Collection implements Iterator, Countable
 
     public function exclude(string $tagOrInterface): Collection
     {
-        $collection = $this->_container->getCollection($tagOrInterface);
-        $collection->_collection = array_values(array_diff($this->_collection, $collection->_collection));
+        if ($this->_container->hasCollection($tagOrInterface)) {
+            $collection = $this->_container->getCollection($tagOrInterface);
+            $collection->_collection = array_values(array_diff($this->_collection, $collection->_collection));
+        } else {
+            $collection = clone $this;
+        }
 
         return $collection;
     }
 
     public function merge(string $tagOrInterface): Collection
     {
-        $collection = $this->_container->getCollection($tagOrInterface);
-        $collection->_collection = array_unique(array_merge($this->_collection, $collection->_collection));
+        if ($this->_container->hasCollection($tagOrInterface)) {
+            $collection = $this->_container->getCollection($tagOrInterface);
+            $collection->_collection = array_unique(array_merge($this->_collection, $collection->_collection));
+        } else {
+            $collection = clone $this;
+        }
 
         return $collection;
     }
 
     public function with(string $tagOrInterface): Collection
     {
-        $collection = $this->_container->getCollection($tagOrInterface);
-        $collection->_collection = array_values(array_intersect($this->_collection, $collection->_collection));
+        if ($this->_container->hasCollection($tagOrInterface)) {
+            $collection = $this->_container->getCollection($tagOrInterface);
+            $collection->_collection = array_values(array_intersect($this->_collection, $collection->_collection));
+        } else {
+            $collection = clone $this;
+            $collection->_collection = [];
+        }
 
         return $collection;
     }
