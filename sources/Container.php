@@ -101,7 +101,7 @@ class Container implements ContainerInterface, \Serializable
                     throw new FinalException(sprintf(FinalException::MSG, $interface));
                 }
 
-                $this->_factories[$index] = [null, $instance, $method, $singleton, $final, $args];
+                $this->_factories[$index] = [null, $instance, $method, $singleton, $final, $args, $interface];
             }
         }
 
@@ -150,20 +150,20 @@ class Container implements ContainerInterface, \Serializable
     public function get($name)
     {
         if (empty($this->_factories[$this->_mapping[__CLASS__]])) {
-            // 0 => instance, 1 => provider, 2 => method, 3 => singleton, 4 => final, 5 => arguments
-            $this->_factories[$this->_mapping[__CLASS__]] = [$this, null, null, null, null, null];
+            // 0 => instance, 1 => provider, 2 => method, 3 => singleton, 4 => final, 5 => arguments, 6 => interface
+            $this->_factories[$this->_mapping[__CLASS__]] = [$this, null, null, null, null, null, __CLASS__];
             $this->_extendInstance(__CLASS__, $this);
         }
 
         if (isset($this->_mapping[$name])) {
             $index = $this->_mapping[$name];
-        } elseif (($interface = $this->get(Aliases::class)->resolve($name)) && isset($this->_mapping[$interface])) {
-            $index = $this->_mapping[$interface];
+        } elseif (($target = $this->get(Aliases::class)->resolve($name)) && isset($this->_mapping[$target])) {
+            $index = $this->_mapping[$target];
         } else {
             throw new ServiceNotFoundException(sprintf(ServiceNotFoundException::MSG, $name));
         }
 
-        list($instance, $provider, $method, $singleton, /* $final */, $arguments) = $this->_factories[$index];
+        list($instance, $provider, $method, $singleton, , $arguments, $interface) = $this->_factories[$index];
 
         if (empty($instance)) {
             if ($instance === false) {
@@ -176,7 +176,7 @@ class Container implements ContainerInterface, \Serializable
                 $arguments = $this->_prepareArguments($arguments ?? [$this], func_get_args());
                 /** @noinspection PhpUnhandledExceptionInspection */
                 $instance = $this->_createInstance([$provider, $method], $arguments);
-                $instance = $this->_extendInstance($name, $instance);
+                $instance = $this->_extendInstance($interface, $instance);
             } finally {
                 $this->_factories[$index][0] = null;
             }

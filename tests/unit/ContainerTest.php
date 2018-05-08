@@ -82,8 +82,6 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         verify($parameters->get('new_parameter'))->same(2);
     }
 
-    // tests
-
     public function testSerialization()
     {
         $this->container = unserialize(serialize($this->container));
@@ -268,12 +266,14 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
 
         $this->specify('Extend service of class ServiceA5 to class ServiceA6', function () {
             verify($this->container->has(ServiceA5::class))->true();
-            /** @var ServiceA6 $service */
-            $service = $this->container->get(ServiceA5::class);
-            verify($service)->isInstanceOf(ServiceA5::class);
-            verify($service)->isInstanceOf(ServiceA6::class);
-            verify($service->getValue5())->same('v5');
-            verify($service->getValue6())->same('v6');
+            foreach ([ServiceA5::class, 'a5'] as $key) {
+                /** @var ServiceA6 $service */
+                $service = $this->container->get($key);
+                verify($service)->isInstanceOf(ServiceA5::class);
+                verify($service)->isInstanceOf(ServiceA6::class);
+                verify($service->getValue5())->same('v5');
+                verify($service->getValue6())->same('v6');
+            }
         });
 
         $this->specify('Options was extended (have new parameter)', function () {

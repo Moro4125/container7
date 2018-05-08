@@ -51,9 +51,9 @@ class ProviderA
         return new ServiceA4($serviceA);
     }
 
-    public function getServiceA5(Container $container): ServiceA5
+    public function getServiceA5(...$arguments): ServiceA5
     {
-        unset($container);
+        unset($arguments);
         $service = new ServiceA5();
         $service->setValue5('v5');
         return $service;
@@ -108,6 +108,7 @@ class ProviderA
     {
         $aliases->add('a1', ServiceA1::class);
         $aliases->add('a2', 'unknown interface');
+        $aliases->add('a5', ServiceA5::class);
     }
 
     public function tags(Tags $tags)

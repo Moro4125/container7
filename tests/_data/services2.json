@@ -33,6 +33,7 @@
         ]
       },
       {
+        "alias": "a5",
         "class": "Moro\\Container7\\Test\\ServiceA5",
         "calls": [
           {
