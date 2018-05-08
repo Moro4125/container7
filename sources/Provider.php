@@ -330,6 +330,7 @@ final class Provider extends Definition
     {
         $tags = new Tags($aliases);
         $tags->add(Tags::REGULAR, Container::class);
+        $tags->register(Tags::RUNTIME);
         return $tags;
     }
 

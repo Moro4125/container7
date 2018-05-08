@@ -15,6 +15,7 @@ namespace Moro\Container7;
 final class Tags
 {
     const REGULAR = 'regular';
+    const RUNTIME = 'runtime';
 
     /** @var Aliases */
     private $_aliases;
